@@ -21,6 +21,9 @@ Channel
   .fromList(synapse_uris)
   .set { ch_synapse_ids }  // channel: [ syn://syn98765432, syn98765432 ]
 
+params.name = false
+run_name = params.name ?: workflow.runName
+
 
 /*
 ========================================================================================
@@ -59,7 +62,8 @@ ch_synapse_files
 // Update Synapse URIs in input file with staged locations
 process update_input {
 
-  publishDir "${input_file.getParent()}/", mode: 'copy'
+  publishDir "${input_file.getParent()}/",  mode: 'copy'
+  publishDir "${outdir}/${run_name}/",      mode: 'copy'
 
   input:
   path input    from input_file

@@ -50,6 +50,7 @@ process synapse_get {
   script:
   """
   synapse --configPath ${syn_config} get --manifest 'suppress' ${syn_id}
+  rm ${syn_config}
   """
 
 }
@@ -65,7 +66,6 @@ ch_synapse_files
 // Update Synapse URIs in input file with staged locations
 process update_input {
 
-  publishDir "${input_file.getParent()}/",  mode: 'copy'
   publishDir "${outdir}/${run_name}/",      mode: 'copy'
 
   input:
@@ -85,3 +85,8 @@ process update_input {
   """
 
 }
+
+
+// Copy tweaked input file next to the original input file
+ch_input_tweaked
+  .copyTo("${input_file.getParent()}/")

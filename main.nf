@@ -44,6 +44,9 @@ process synapse_get {
   output:
   tuple val(syn_uri), val(syn_id), path("*")    into ch_synapse_files
 
+  when:
+  synapse_uris.size() > 0
+
   script:
   """
   synapse --configPath ${syn_config} get --manifest 'suppress' ${syn_id}
@@ -71,6 +74,9 @@ process update_input {
 
   output:
   path "${output}"    into ch_input_tweaked
+
+  when:
+  synapse_uris.size() > 0
 
   script:
   output = "${input_file.getBaseName()}.staged.${input_file.getExtension()}"

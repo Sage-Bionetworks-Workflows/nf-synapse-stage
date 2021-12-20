@@ -7,8 +7,9 @@
 ========================================================================================
 */
 
+params.synapse_config = false  // Default
+ch_synapse_config = params.synapse_config ? Channel.value(file(params.synapse_config)) : "null"
 
-synapse_config_file = file(params.synapse_config, checkIfExists: true)
 input_file = file(params.input, checkIfExists: true)
 outdir = params.outdir.replaceAll('/$', '')
 
@@ -37,9 +38,11 @@ process synapse_get {
 
   publishDir "${outdir}/${syn_id}/", mode: 'copy'
 
+  secret 'SYNAPSE_AUTH_TOKEN'
+
   input:
   tuple val(syn_uri), val(syn_id)   from ch_synapse_ids
-  path  syn_config                  from synapse_config_file
+  file  syn_config                  from ch_synapse_config
 
   output:
   tuple val(syn_uri), val(syn_id), path("*")    into ch_synapse_files
@@ -48,10 +51,17 @@ process synapse_get {
   synapse_uris.size() > 0
 
   script:
-  """
-  synapse --configPath ${syn_config} get --manifest 'suppress' ${syn_id}
-  rm ${syn_config}
-  """
+  if ( params.synapse_config ) {
+    """
+    synapse --configPath ${syn_config} get --manifest 'suppress' ${syn_id}
+    rm ${syn_config}
+    """
+  } else {
+    """
+    # Using SYNAPSE_AUTH_TOKEN secret from the environment
+    synapse get --manifest 'suppress' ${syn_id}
+    """
+  }
 
 }
 
@@ -85,8 +95,3 @@ process update_input {
   """
 
 }
-
-
-// Copy tweaked input file next to the original input file
-ch_input_tweaked
-  .copyTo("${input_file.getParent()}/")

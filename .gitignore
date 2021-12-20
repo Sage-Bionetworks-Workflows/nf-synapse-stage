@@ -1,0 +1,4 @@
+# Nextflow test files
+work/
+outputs/
+.nextflow*

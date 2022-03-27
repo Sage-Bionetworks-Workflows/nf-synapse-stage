@@ -2,3 +2,6 @@
 work/
 outputs/
 .nextflow*
+
+# IDE files
+.vscode/

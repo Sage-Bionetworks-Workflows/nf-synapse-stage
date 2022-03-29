@@ -77,7 +77,7 @@ println(input_file.parent)
 // Update Synapse URIs in input file with staged locations
 process update_input {
 
-  publishDir "${input_file.parent}/synstage/",  mode: 'copy', overwrite: true
+  publishDir "${input_file.scheme}://${input_file.parent}/synstage/",  mode: 'copy'
   publishDir "${outdir}/${run_name}/",          mode: 'copy'
 
   input:

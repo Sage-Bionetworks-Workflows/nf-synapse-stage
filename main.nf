@@ -72,11 +72,12 @@ ch_synapse_files
   .reduce { a, b -> "${a} ${b}" }
   .set { ch_synapse_sed }
 
+println(input_file.parent)
 
 // Update Synapse URIs in input file with staged locations
 process update_input {
 
-  publishDir "${input_file.parent}/synstage/",  mode: 'copy'
+  publishDir "${input_file.parent}/synstage/",  mode: 'copy', overwrite: true
   publishDir "${outdir}/${run_name}/",          mode: 'copy'
 
   input:

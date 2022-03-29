@@ -76,22 +76,22 @@ ch_synapse_files
 // Update Synapse URIs in input file with staged locations
 process update_input {
 
-  publishDir "${outdir}/${run_name}/",      mode: 'copy'
+  publishDir "${input_file.scheme}://${input_file.parent}/synstage/",  mode: 'copy'
+  publishDir "${outdir}/${run_name}/",          mode: 'copy'
 
   input:
-  path input    from input_file
-  val  exprs    from ch_synapse_sed
+  path "input.txt"    from input_file
+  val  exprs          from ch_synapse_sed
 
   output:
-  path "${output}"    into ch_input_tweaked
+  path "${input_file.name}"  into ch_input_tweaked
 
   when:
   synapse_uris.size() > 0
 
   script:
-  output = "${input_file.getBaseName()}.staged.${input_file.getExtension()}"
   """
-  sed -E ${exprs} ${input} > ${output}
+  sed -E ${exprs} input.txt > ${input_file.name}
   """
 
 }

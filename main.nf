@@ -72,6 +72,7 @@ ch_synapse_files
   .reduce { a, b -> "${a} ${b}" }
   .set { ch_synapse_sed }
 
+
 // Update Synapse URIs in input file with staged locations
 process update_input {
 

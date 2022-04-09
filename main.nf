@@ -7,6 +7,9 @@
 ========================================================================================
 */
 
+// Ensure DSL1
+nextflow.enable.dsl = 1
+
 params.synapse_config = false  // Default
 ch_synapse_config = params.synapse_config ? Channel.value(file(params.synapse_config)) : "null"
 

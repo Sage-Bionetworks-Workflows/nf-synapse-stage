@@ -15,9 +15,7 @@ ch_synapse_config = params.synapse_config ? Channel.value(file(params.synapse_co
 
 input_file = file(params.input, checkIfExists: true)
 
-workdir = "${workDir.parent}/${workDir.name}"
-params.outdir = "${workDir.scheme}://${workdir}/synstage/"
-outdir = params.outdir.replaceAll('/$', '')
+params.outdir = "${workDir}/synstage/"
 
 
 // Parse Synapse URIs from input file
@@ -42,7 +40,7 @@ run_name = params.name
 // Download files from Synapse
 process synapse_get {
 
-  publishDir "${outdir}/${syn_id}/", mode: 'copy'
+  publishDir "${params.outdir}/${syn_id}/", mode: 'copy'
 
   secret 'SYNAPSE_AUTH_TOKEN'
 
@@ -74,7 +72,7 @@ process synapse_get {
 
 // Convert Synapse URIs and staged locations into sed expressions
 ch_synapse_files
-  .map { syn_uri, syn_id, syn_file -> /-e 's|\b${syn_uri}\b|${outdir}\/${syn_id}\/${syn_file.name}|g'/ }
+  .map { syn_uri, syn_id, syn_file -> /-e 's|\b${syn_uri}\b|${params.outdir}\/${syn_id}\/${syn_file.name}|g'/ }
   .reduce { a, b -> "${a} ${b}" }
   .set { ch_synapse_sed }
 
@@ -82,8 +80,8 @@ ch_synapse_files
 // Update Synapse URIs in input file with staged locations
 process update_input {
 
-  publishDir "${input_file.scheme}://${input_file.parent}/synstage/",  mode: 'copy'
-  publishDir "${outdir}/${run_name}/",          mode: 'copy'
+  publishDir "${input_file}/../synstage/", mode: 'copy'
+  publishDir "${params.outdir}/${run_name}/",     mode: 'copy'
 
   input:
   path "input.txt"    from input_file

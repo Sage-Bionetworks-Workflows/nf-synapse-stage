@@ -14,7 +14,10 @@ params.synapse_config = false  // Default
 ch_synapse_config = params.synapse_config ? Channel.value(file(params.synapse_config)) : "null"
 
 input_file = file(params.input, checkIfExists: true)
+
+params.outdir = "${workDir}/synapse/"
 outdir = params.outdir.replaceAll('/$', '')
+println(outdir)
 
 
 // Parse Synapse URIs from input file

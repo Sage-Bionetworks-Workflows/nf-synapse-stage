@@ -70,9 +70,9 @@ Check out the [Quickstart](#quickstart) section for example parameter values.
 
 - **`input`**: (Required) A text file containing Synapse URIs (_e.g._ `syn://syn28521174`). The text file can have any format (_e.g._ a single column of Synapse URIs, a CSV/TSV sample sheet for an nf-core workflow).
 
-- **`synapse_config`**: (Optional) A [Synapse configuration file](https://python-docs.synapse.org/build/html/Credentials.html#use-synapseconfig) containing authentication credentials. A minimal example is included in the [Quickstart](#quickstart) section.
-
 - **`outdir`**: (Optional) An output location where the Synapse files will be staged. Currently, this location must be an S3 prefix.
+
+- **`synapse_config`**: (Optional) A [Synapse configuration file](https://python-docs.synapse.org/build/html/Credentials.html#use-synapseconfig) containing authentication credentials.
 
 ## Known Limitations
 

@@ -15,7 +15,7 @@ ch_synapse_config = params.synapse_config ? Channel.value(file(params.synapse_co
 
 input_file = file(params.input, checkIfExists: true)
 
-params.outdir = "${workDir}/synstage/"
+params.outdir = "${workDir.scheme}://${workdir}/synstage/"
 
 
 // Parse Synapse URIs from input file

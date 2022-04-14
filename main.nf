@@ -80,8 +80,8 @@ ch_synapse_files
 // Update Synapse URIs in input file with staged locations
 process update_input {
 
-  publishDir "${input_file}/../synstage/", mode: 'copy'
-  publishDir "${params.outdir}/${run_name}/",     mode: 'copy'
+  publishDir "${input_file.scheme}://${input_file.parent}/synstage/", mode: 'copy'
+  publishDir "${params.outdir}/${run_name}/",                         mode: 'copy'
 
   input:
   path "input.txt"    from input_file

@@ -14,6 +14,9 @@ params.synapse_config = false  // Default
 ch_synapse_config = params.synapse_config ? Channel.value(file(params.synapse_config)) : "null"
 
 input_file = file(params.input, checkIfExists: true)
+
+workdir_parent = workDir.parent.replaceAll('/$', '')
+params.outdir = "${workDir.scheme}://${workdir_parent}/synstage/"
 outdir = params.outdir.replaceAll('/$', '')
 
 
@@ -25,8 +28,8 @@ Channel
   .fromList(synapse_uris)
   .set { ch_synapse_ids }  // channel: [ syn://syn98765432, syn98765432 ]
 
-params.name = false
-run_name = params.name ?: workflow.runName
+params.name = workflow.runName
+run_name = params.name
 
 
 /*
@@ -56,13 +59,13 @@ process synapse_get {
   script:
   if ( params.synapse_config ) {
     """
-    synapse --configPath ${syn_config} get --manifest 'suppress' ${syn_id}
+    synapse --configPath ${syn_config} get ${syn_id}
     rm ${syn_config}
     """
   } else {
     """
     # Using SYNAPSE_AUTH_TOKEN secret from the environment
-    synapse get --manifest 'suppress' ${syn_id}
+    synapse get ${syn_id}
     """
   }
 

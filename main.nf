@@ -15,8 +15,8 @@ ch_synapse_config = params.synapse_config ? Channel.value(file(params.synapse_co
 
 input_file = file(params.input, checkIfExists: true)
 
-workdir_parent = workDir.parent.replaceAll('/$', '')
-params.outdir = "${workDir.scheme}://${workdir_parent}/synstage/"
+workdir = "${workDir.parent}/${workDir.name}"
+params.outdir = "${workDir.scheme}://${workdir}/synstage/"
 outdir = params.outdir.replaceAll('/$', '')
 
 

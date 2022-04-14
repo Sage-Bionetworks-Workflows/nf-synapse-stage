@@ -56,13 +56,13 @@ process synapse_get {
   script:
   if ( params.synapse_config ) {
     """
-    synapse --configPath ${syn_config} get --manifest 'suppress' ${syn_id}
+    synapse --configPath ${syn_config} get ${syn_id}
     rm ${syn_config}
     """
   } else {
     """
     # Using SYNAPSE_AUTH_TOKEN secret from the environment
-    synapse get --manifest 'suppress' ${syn_id}
+    synapse get ${syn_id}
     """
   }
 

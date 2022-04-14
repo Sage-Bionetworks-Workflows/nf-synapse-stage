@@ -14,7 +14,8 @@
                 "input": {
                     "type": "string",
                     "description": "Path to a file (often samplesheets) containing Synapse URIs",
-                    "fa_icon": "far fa-file-alt"
+                    "fa_icon": "far fa-file-alt",
+                    "schema": "assets/schema_input.json"
                 },
                 "outdir": {
                     "type": "string",

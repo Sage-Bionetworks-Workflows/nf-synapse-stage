@@ -1,0 +1,11 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/Sage-Bionetworks-Workflows/nf-synstage/master/assets/schema_input.json",
+    "title": "Sage-Bionetworks-Workflows/nf-synstage pipeline - params.input schema",
+    "description": "Schema for the file provided with params.input",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {}
+    }
+}

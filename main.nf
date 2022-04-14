@@ -15,9 +15,8 @@ ch_synapse_config = params.synapse_config ? Channel.value(file(params.synapse_co
 
 input_file = file(params.input, checkIfExists: true)
 
-params.outdir = "${workDir}/synapse/"
+params.outdir = "${workDir.scheme}://${workDir.parent}/synstage/"
 outdir = params.outdir.replaceAll('/$', '')
-println(outdir)
 
 
 // Parse Synapse URIs from input file
@@ -28,8 +27,8 @@ Channel
   .fromList(synapse_uris)
   .set { ch_synapse_ids }  // channel: [ syn://syn98765432, syn98765432 ]
 
-params.name = false
-run_name = params.name ?: workflow.runName
+params.name = workflow.runName
+run_name = params.name
 
 
 /*

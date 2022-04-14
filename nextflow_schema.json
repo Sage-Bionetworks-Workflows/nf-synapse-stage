@@ -15,7 +15,7 @@
                     "type": "string",
                     "description": "Path to a file (often samplesheets) containing Synapse URIs",
                     "fa_icon": "far fa-file-alt",
-                    "mimetype": "text/*"
+                    "mimetype": "text/csv"
                 },
                 "outdir": {
                     "type": "string",

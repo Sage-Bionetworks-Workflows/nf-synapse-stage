@@ -26,6 +26,7 @@ synapse_uris = (input_file.text =~ 'syn://(syn[0-9]+)').findAll()
 
 Channel
   .fromList(synapse_uris)
+  .unique()
   .set { ch_synapse_ids }  // channel: [ syn://syn98765432, syn98765432 ]
 
 params.name = workflow.runName

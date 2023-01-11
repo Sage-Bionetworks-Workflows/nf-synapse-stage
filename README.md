@@ -57,11 +57,14 @@ The examples below demonstrate how you would stage Synapse files in an S3 bucket
 
 If you are staging Seven Bridges files, there are a few differences that you will want to incorporate in your Nextflow run. 
 
-#### URIs
+When adding your URIs to your input file, Seven Bridges file URIs should have the prefix `sbg://`. 
 
-When adding your URIs to your input file, Seven Bridges file URIs should have the prefix `sbg://`. Additionally, there are two ways to get the ID of a file in Seven Bridges:
+There are two ways to get the ID of a file in Seven Bridges:
+
 1. The first way involves simply logging in to [Seven Bridges CGC](https://cgc-accounts.sbgenomics.com/auth/login), navigating to the file and copying the ID from the URL. For example, your URL might look like this: "https://cgc.sbgenomics.com/u/brmacdonald/invite-test/files/63b717559fd1ad5d228550a0/". From this url, you would copy the "63b717559fd1ad5d228550a0" piece and combine it with the `sbg://` prefix to have the complete URI `sbg://63b717559fd1ad5d228550a0`.
 2. The second way involves using the [SBG CLI](https://docs.sevenbridges.com/docs/files-and-metadata). To get the ID numbers that you need, run the `sb files list` command and specify the project that you are downloading files from. A list of all files in the project will be returned, and you will combine the ID number with the prefix for each file that you want to stage.
+
+`nf-synstage` can handle either or both types of URIs in one run.
 
 
 ## Authentication
@@ -82,7 +85,7 @@ You can generate a Synapse personal access token using [this dashboard](https://
 To authenticate a Seven Bridges account, you need to configure two secrets. In order to retrieve your secrets, login to [Seven Bridges CGC](https://cgc-accounts.sbgenomics.com/auth/login), click on the "Developer" dropdown and click on "Authentication Token". 
 
 1. Copy your Authentication Token and create a secret called `SB_AUTH_TOKEN` using the [Nextflow CLI](https://nextflow.io/docs/latest/secrets.html) or [Nextflow Tower](https://help.tower.nf/latest/secrets/overview/).
-2. Copy the API endpoint and create a secret called `SB_API_ENDPOINT`.
+2. Copy the API endpoint and create a secret called `SB_API_ENDPOINT` using the same method.
 
 ## Parameters
 

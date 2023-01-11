@@ -22,11 +22,16 @@ outdir = params.outdir.replaceAll('/$', '')
 
 // Parse Synapse URIs from input file
 synapse_uris = (input_file.text =~ 'syn://(syn[0-9]+)').findAll()
-
-
+// Parse SBG URIs from input file
+sbg_uris = (input_file.text =~ 'sbg://(.+)').findAll()
+// Synapse channel
 Channel
   .fromList(synapse_uris)
   .set { ch_synapse_ids }  // channel: [ syn://syn98765432, syn98765432 ]
+// SBG channel
+Channel
+  .fromList(sbg_uris)
+  .set { ch_sbg_ids } // channel: [ sbg://63b717559fd1ad5d228550a0, 63b717559fd1ad5d228550a0]
 
 params.name = workflow.runName
 run_name = params.name
@@ -71,13 +76,53 @@ process synapse_get {
 
 }
 
+// Download files from SevenBridges
+process sbg_get {
 
-// Convert Synapse URIs and staged locations into sed expressions
-ch_synapse_files
-  .map { syn_uri, syn_id, syn_file -> /-e 's|\b${syn_uri}\b|${outdir}\/${syn_id}\/${syn_file.name}|g'/ }
+  container "quay.io/biocontainers/sevenbridges-python:2.9.1--pyhdfd78af_0"
+
+  publishDir "${outdir}/${sbg_id}/", mode: 'copy'
+
+  secret 'SB_API_ENDPOINT'
+  secret 'SB_AUTH_TOKEN'
+
+  input:
+  tuple val(sbg_uri), val(sbg_id)   from ch_sbg_ids
+
+  output:
+  tuple val(sbg_uri), val(sbg_id), path("*")    into ch_sbg_files
+
+  when:
+  sbg_uris.size() > 0
+
+  script:
+  """
+
+  #!/usr/bin/env python3
+
+  import sevenbridges as sbg
+
+  api = sbg.Api()
+  download_file = api.files.get("63b717559fd1ad5d228550a0")
+  download_file.download(download_file.name)
+
+  """
+
+}
+// Mix channels, allowing for either of them to be null
+if (ch_synapse_files == null) {
+    ch_all_files = ch_sbg_files
+} else if (ch_sbg_files == null) {
+  ch_all_files = ch_synapse_files
+} else {
+  ch_all_files = ch_synapse_files.mix(ch_sbg_files)
+}
+
+// Convert Mixed URIs and staged locations into sed expressions
+ch_all_files
+  .map { uri, id, file -> /-e 's|\b${uri}\b|${outdir}\/${id}\/${file.name}|g'/ }
   .reduce { a, b -> "${a} ${b}" }
-  .set { ch_synapse_sed }
-
+  .set { ch_stage_sed }
 
 // Update Synapse URIs in input file with staged locations
 process update_input {
@@ -87,13 +132,13 @@ process update_input {
 
   input:
   path "input.txt"    from input_file
-  val  exprs          from ch_synapse_sed
+  val  exprs          from ch_stage_sed
 
   output:
   path "${input_file.name}"  into ch_input_tweaked
 
   when:
-  synapse_uris.size() > 0
+  synapse_uris.size() > 0 || sbg_uris.size() > 0
 
   script:
   """

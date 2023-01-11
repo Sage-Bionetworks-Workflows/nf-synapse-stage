@@ -2,13 +2,13 @@
 
 ## Purpose
 
-The purpose of this Nextflow workflow is to automate the process of staging Synapse files in an accessible location (_e.g._ an S3 bucket). In turn, these staged files can be used as input for a general-purpose (_e.g._ nf-core) workflow that doesn't contain Synapse-specific steps for downloading data. This workflow is intended to be run first in preparation for other data processing workflows.
+The purpose of this Nextflow workflow is to automate the process of staging Synapse and Seven Bridges CGC files in an accessible location (_e.g._ an S3 bucket). In turn, these staged files can be used as input for a general-purpose (_e.g._ nf-core) workflow that doesn't contain platform-specific steps for downloading data. This workflow is intended to be run first in preparation for other data processing workflows.
 
 Briefly, `nf-synstage` achieves this automation as follows:
 
-1. Extract all Synapse URIs (_e.g._ `syn://syn28521174`) from a given text file
-2. Download the corresponding files from Synapse in parallel
-3. Replace the Synapse URIs in the text file with their staged locations
+1. Extract all Synapse and Seven Bridges URIs (_e.g._ `syn://syn28521174` or `sbg://63b717559fd1ad5d228550a0`) from a given text file
+2. Download the corresponding files from both platforms in parallel
+3. Replace the URIs in the text file with their staged locations
 4. Output the updated text file so it can serve as input for another workflow
 
 ## Quickstart
@@ -53,16 +53,36 @@ The examples below demonstrate how you would stage Synapse files in an S3 bucket
     foobar,s3://example-scratch/synstage/syn28521174/foobar.R1.fastq.gz,s3://example-scratch/synstage/syn28521175/foobar.R2.fastq.gz,unstranded
     ```
 
+### Special Considerations for Seven Bridges CGC Files
+
+If you are staging Seven Bridges files, there are a few differences that you will want to incorporate in your Nextflow run. 
+
+#### URIs
+
+When adding your URIs to your input file, Seven Bridges file URIs should have the prefix `sbg://`. Additionally, there are two ways to get the ID of a file in Seven Bridges:
+1. The first way involves simply logging in to [Seven Bridges CGC](https://cgc-accounts.sbgenomics.com/auth/login), navigating to the file and copying the ID from the URL. For example, your URL might look like this: "https://cgc.sbgenomics.com/u/brmacdonald/invite-test/files/63b717559fd1ad5d228550a0/". From this url, you would copy the "63b717559fd1ad5d228550a0" piece and combine it with the `sbg://` prefix to have the complete URI `sbg://63b717559fd1ad5d228550a0`.
+2. The second way involves using the [SBG CLI](https://docs.sevenbridges.com/docs/files-and-metadata). To get the ID numbers that you need, run the `sb files list` command and specify the project that you are downloading files from. A list of all files in the project will be returned, and you will combine the ID number with the prefix for each file that you want to stage.
+
+
 ## Authentication
+
+### Synapse 
 
 Downloading files from Synapse requires the workflow to be authenticated. The workflow currently supports two authentication methods:
 
 - **(Preferred)** Create a secret called `SYNAPSE_AUTH_TOKEN` containing a Synapse personal access token using the [Nextflow CLI](https://nextflow.io/docs/latest/secrets.html) or [Nextflow Tower](https://help.tower.nf/latest/secrets/overview/).
 - Provide a Synapse configuration file containing a personal access token (see example above) to the `synapse_config` parameter. This method is best used if Nextflow/Tower secrets aren't supported on your platform. **Important:** Make sure that your `synapse_config` file is not stored in a directory that will be indexed on or uploaded to Synapse.
 
-### Personal access tokens
+#### Personal access tokens
 
 You can generate a Synapse personal access token using [this dashboard](https://www.synapse.org/#!PersonalAccessTokens:).
+
+### Seven Bridges CGC
+
+To authenticate a Seven Bridges account, you need to configure two secrets. In order to retrieve your secrets, login to [Seven Bridges CGC](https://cgc-accounts.sbgenomics.com/auth/login), click on the "Developer" dropdown and click on "Authentication Token". 
+
+1. Copy your Authentication Token and create a secret called `SB_AUTH_TOKEN` using the [Nextflow CLI](https://nextflow.io/docs/latest/secrets.html) or [Nextflow Tower](https://help.tower.nf/latest/secrets/overview/).
+2. Copy the API endpoint and create a secret called `SB_API_ENDPOINT`.
 
 ## Parameters
 

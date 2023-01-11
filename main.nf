@@ -103,7 +103,7 @@ process sbg_get {
   import sevenbridges as sbg
 
   api = sbg.Api()
-  download_file = api.files.get("63b717559fd1ad5d228550a0")
+  download_file = api.files.get('${sbg_id}')
   download_file.download(download_file.name)
 
   """

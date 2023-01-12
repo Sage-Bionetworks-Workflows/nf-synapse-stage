@@ -109,15 +109,8 @@ process sbg_get {
   """
 
 }
-// Mix channels, allowing for either of them to be null
-if (ch_synapse_files == null) {
-    ch_all_files = ch_sbg_files
-} else if (ch_sbg_files == null) {
-  ch_all_files = ch_synapse_files
-} else {
-  ch_all_files = ch_synapse_files.mix(ch_sbg_files)
-}
-
+// Mix channels
+ch_all_files = ch_synapse_files.mix(ch_sbg_files)
 // Convert Mixed URIs and staged locations into sed expressions
 ch_all_files
   .map { uri, id, file -> /-e 's|\b${uri}\b|${outdir}\/${id}\/${file.name}|g'/ }

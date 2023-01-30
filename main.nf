@@ -27,6 +27,7 @@ sbg_uris = (input_file.text =~ 'sbg://(.+)').findAll()
 // Synapse channel
 Channel
   .fromList(synapse_uris)
+  .unique()
   .set { ch_synapse_ids }  // channel: [ syn://syn98765432, syn98765432 ]
 // SBG channel
 Channel

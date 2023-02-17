@@ -24,6 +24,15 @@ outdir = params.outdir.replaceAll('/$', '')
 synapse_uris = (input_file.text =~ 'syn://(syn[0-9]+)').findAll()
 // Parse SBG URIs from input file
 sbg_uris = (input_file.text =~ 'sbg://(.+)').findAll()
+
+// Warning about input file lacking URIs
+if (synapse_uris.size() == 0 && sbg_uris.size() == 0) {
+  message = "The input file (${params.input}) does not contain any Synapse " +
+            "URIs (e.g., syn://syn98765432) or SevenBridges URIs " +
+            "(e.g., sbg://63b717559fd1ad5d228550a0). Is this expected?"
+  log.warn(message)
+}
+
 // Synapse channel
 Channel
   .fromList(synapse_uris)

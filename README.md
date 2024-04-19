@@ -1,5 +1,7 @@
 # nf-synstage: Stage Synapse Files
 
+**This repository has been archived. Its functionality has been added to [`nf-synapse`](https://github.com/Sage-Bionetworks-Workflows/nf-synapse). We recommend users switch to using `nf-synapse` for all file staging and indexing needs.**
+
 ## Purpose
 
 The purpose of this Nextflow workflow is to automate the process of staging Synapse and SevenBridges files in an accessible location (_e.g._ an S3 bucket). In turn, these staged files can be used as input for a general-purpose (_e.g._ nf-core) workflow that doesn't contain platform-specific steps for downloading data. This workflow is intended to be run first in preparation for other data processing workflows.
